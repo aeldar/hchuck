@@ -33,6 +33,9 @@ executable hchuck
     build-depends:    base ^>=4.18.1.0
                       , wreq
                       , lens
+                      , lens-aeson
+                      , aeson
+                      , text
 
     hs-source-dirs:   app
     default-language: Haskell2010
