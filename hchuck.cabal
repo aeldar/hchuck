@@ -30,7 +30,7 @@ executable hchuck
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.18.1.0
+    build-depends:    base ^>=4.19.0.0
                       , wreq
                       , lens
                       , lens-aeson
