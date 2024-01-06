@@ -1,109 +1,83 @@
-name: CI
-
+name: build
 on:
-  workflow_dispatch:
-  pull_request:
-    types: [synchronize, opened, reopened]
   push:
-    branches: [main]
-  schedule:
-    # additionally run once per week (At 00:00 on Sunday) to maintain cache
-    - cron: '0 0 * * 0'
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+# INFO: The following configuration block ensures that only one build runs per branch,
+# which may be desirable for projects with a costly build process.
+# Remove this block from the CI workflow to let each CI job run to completion.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  cabal:
-    name: ${{ matrix.os }} / ghc ${{ matrix.ghc }}
+  build:
+    name: GHC ${{ matrix.ghc-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
-        cabal: ["3.10.2.1"]
-        ghc:
-          - "9.4"
-          - "9.6"
-          - "9.8"
-        exclude:
-          - os: macOS-latest
-            ghc: 9.6
-          - os: macOS-latest
-            ghc: 9.4
+        os: [ubuntu-latest]
+        ghc-version: ['9.8', '9.6', '9.4', '9.2', '9.0']
 
+        include:
           - os: windows-latest
-            ghc: 9.6
-          - os: windows-latest
-            ghc: 9.4
+            ghc-version: '9.8'
+          - os: macos-latest
+            ghc-version: '9.8'
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - uses: haskell/actions/setup@v1.2
-      id: setup-haskell-cabal
-      name: Setup Haskell
-      with:
-        ghc-version: ${{ matrix.ghc }}
-        cabal-version: ${{ matrix.cabal }}
+      - name: Set up GHC ${{ matrix.ghc-version }}
+        uses: haskell-actions/setup@v2
+        id: setup
+        with:
+          ghc-version: ${{ matrix.ghc-version }}
+          # Defaults, added for clarity:
+          cabal-version: 'latest'
+          cabal-update: true
 
-    - name: Configure
-      run: |
-        cabal configure --enable-tests --enable-benchmarks --enable-documentation --test-show-details=direct --write-ghc-environment-files=always
+      - name: Configure the build
+        run: |
+          cabal configure --enable-tests --enable-benchmarks --disable-documentation
+          cabal build all --dry-run
+        # The last step generates dist-newstyle/cache/plan.json for the cache key.
 
-    - name: Freeze
-      run: |
-        cabal freeze
+      - name: Restore cached dependencies
+        uses: actions/cache/restore@v3
+        id: cache
+        env:
+          key: ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-cabal-${{ steps.setup.outputs.cabal-version }}
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ env.key }}-plan-${{ hashFiles('**/plan.json') }}
+          restore-keys: ${{ env.key }}-
 
-    - uses: actions/cache@v2
-      name: Cache ~/.cabal/store
-      with:
-        path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
-        key: ${{ runner.os }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
+      - name: Install dependencies
+        # If we had an exact cache hit, the dependencies will be up to date.
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: cabal build all --only-dependencies
 
-    - name: Install dependencies
-      run: |
-        cabal build all --only-dependencies
+      # Cache dependencies already here, so that we do not have to rebuild them should the subsequent steps fail.
+      - name: Save cached dependencies
+        uses: actions/cache/save@v3
+        # If we had an exact cache hit, trying to save the cache would error because of key clash.
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ steps.cache.outputs.cache-primary-key }}
 
-    - name: Build
-      run: |
-        cabal build all
+      - name: Build
+        run: cabal build all
 
-    - name: Test
-      run: |
-        cabal test all
+      - name: Run tests
+        run: cabal test all
 
-    - name: Documentation
-      run: |
-        cabal haddock
+      - name: Check cabal file
+        run: cabal check
 
-  # stack:
-  #   name: stack / ghc ${{ matrix.ghc }}
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       stack: ["2.7.3"]
-  #       ghc: ["8.10.7"]
-  #
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #
-  #   - uses: haskell/actions/setup@v1.2
-  #     name: Setup Haskell Stack
-  #     with:
-  #       ghc-version: ${{ matrix.ghc }}
-  #       stack-version: ${{ matrix.stack }}
-  #
-  #   - uses: actions/cache@v2
-  #     name: Cache ~/.stack
-  #     with:
-  #       path: ~/.stack
-  #       key: ${{ runner.os }}-${{ matrix.ghc }}-stack
-  #
-  #   - name: Install dependencies
-  #     run: |
-  #       stack build --system-ghc --test --bench --no-run-tests --no-run-benchmarks --only-dependencies
-  #
-  #   - name: Build
-  #     run: |
-  #       stack build --system-ghc --test --bench --no-run-tests --no-run-benchmarks
-  #
-  #   - name: Test
-  #     run: |
-  #       stack test --system-ghc
+      - name: Build documentation
+        run: cabal haddock all
