@@ -4,6 +4,7 @@ version:            0.1.0.0
 synopsis:           Chuck Norris jokes in your CLI
 description:        Example project for Haskell, that exposes a CLI tool to get Chuck Norris jokes.
 homepage:           https://github.com/aeldar/hchuck
+category:           CLI
 license:            MIT
 license-file:       LICENSE
 author:             Eldar Aliyev
@@ -12,6 +13,9 @@ build-type:         Simple
 
 -- Extra doc files to be distributed with the package, such as a CHANGELOG or a README.
 extra-doc-files:    CHANGELOG.md
+source-repository head
+    type: git
+    location: git://github.com/aeldar/hchuck.git
 
 -- Extra source files to be distributed with the package, such as examples, or a tutorial module.
 -- extra-source-files:
@@ -31,11 +35,12 @@ executable hchuck
 
     -- Other library packages from which modules are imported.
     build-depends:    base >4.15 && <5
-                      , wreq
-                      , lens
-                      , lens-aeson
-                      , aeson
-                      , text
+                      , aeson >= 2.2.1 && < 2.3
+                      , text >= 2.1 && < 2.2
+                      , lens >= 5.2.3 && < 5.3
+                      , lens-aeson >= 1.2.3 && < 1.3
+                      , wreq >= 0.5.4 && < 0.6
+
 
     hs-source-dirs:   app
     default-language: Haskell2010
