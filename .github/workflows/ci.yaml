@@ -2,6 +2,8 @@ name: build
 on:
   push:
 
+env:
+  BINARY_NAME: hchuck
 # INFO: The following configuration block ensures that only one build runs per branch,
 # which may be desirable for projects with a costly build process.
 # Remove this block from the CI workflow to let each CI job run to completion.
@@ -90,14 +92,14 @@ jobs:
       - name: Strip and compress
         uses: svenstaro/upx-action@v2
         with:
-          files: artifact/${{ matrix.os }}/hchuck*
+          files: artifact/${{ matrix.os }}/${{ env.BINARY_NAME }}*
           args: ${{ matrix.upx-args }}
           strip: ${{ matrix.strip }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hchuck-${{ github.sha }}-${{ matrix.os }}
+          name: ${{ env.BINARY_NAME }}-${{ github.sha }}-${{ matrix.os }}
           path: artifact
 
   release:
@@ -108,16 +110,16 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          pattern: hchuck-${{ github.sha }}-*
+          pattern: ${{ env.BINARY_NAME }}-${{ github.sha }}-*
           path: artifact
           merge-multiple: true
 
       - name: Zip artifacts
         run: |
           find ./artifact -type f -exec chmod a+x {} \;
-          zip -j artifact/hchuck-${{ github.ref_name }}-ubuntu.zip artifact/ubuntu-latest/hchuck
-          zip -j artifact/hchuck-${{ github.ref_name }}-windows.zip artifact/windows-latest/hchuck.exe
-          zip -j artifact/hchuck-${{ github.ref_name }}-macos.zip artifact/macos-latest/hchuck
+          zip -j artifact/${{ env.BINARY_NAME }}-${{ github.ref_name }}-ubuntu.zip artifact/ubuntu-latest/${{ env.BINARY_NAME }}
+          zip -j artifact/${{ env.BINARY_NAME }}-${{ github.ref_name }}-windows.zip artifact/windows-latest/${{ env.BINARY_NAME }}.exe
+          zip -j artifact/${{ env.BINARY_NAME }}-${{ github.ref_name }}-macos.zip artifact/macos-latest/${{ env.BINARY_NAME }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
