@@ -119,7 +119,7 @@ jobs:
           find ./artifact -type f -exec chmod a+x {} \;
           zip -j artifact/hchuck-${{ github.ref_name }}-ubuntu.zip artifact/ubuntu-latest/hchuck
           zip -j artifact/hchuck-${{ github.ref_name }}-windows.zip artifact/windows-latest/hchuck.exe
-          zip -j artifact/hchuck-${{ github.ref_name }}-macos.zip artifact/windows-latest/hchuck
+          zip -j artifact/hchuck-${{ github.ref_name }}-macos.zip artifact/macos-latest/hchuck
 
       - name: Release
         uses: softprops/action-gh-release@v1
