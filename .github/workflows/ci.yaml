@@ -108,7 +108,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          patter: hchuck-${{ github.sha }}-*
+          pattern: hchuck-${{ github.sha }}-*
           path: artifact
           merge-multiple: true
 
