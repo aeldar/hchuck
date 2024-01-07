@@ -90,6 +90,9 @@ jobs:
       - name: Install binary
         run: cabal install --installdir artefact/${{ matrix.os }} --install-method copy
 
+      - name: Debug directories
+        run: ls -lh artefact
+
       - name: Compress
         uses: svenstaro/upx-action@v2
         with:
