@@ -14,4 +14,4 @@ cabal build
 
 ## Download binary
 
-See [Releases](./releases).
+See [Releases](https://github.com/aeldar/hchuck/releases).
