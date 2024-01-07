@@ -108,7 +108,8 @@ jobs:
 
   release:
     needs: build
-    if: github.event_name == 'release'
+    # if: github.event_name == 'release'
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
 
@@ -119,29 +120,34 @@ jobs:
           name: hchuck-${{ github.sha }}
           path: artifact
 
-      - uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          asset_content_type: application/octet-stream
-          asset_name: hchuck-${{ github.event.release.tag_name }}-ubuntu
-          asset_path: artifact/ubuntu-latest/hchuck
-          upload_url: ${{ github.event.release.upload_url }}
+          files: artifact/**/*
 
-      - uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          asset_content_type: application/octet-stream
-          asset_name: hchuck-${{ github.event.release.tag_name }}-macos
-          asset_path: artifact/macos-latest/hchuck
-          upload_url: ${{ github.event.release.upload_url }}
-
-      - uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          asset_content_type: application/octet-stream
-          asset_name: hchuck-${{ github.event.release.tag_name }}-windows.exe
-          asset_path: artifact/windows-latest/hchuck.exe
-          upload_url: ${{ github.event.release.upload_url }}
+      # - uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     asset_content_type: application/octet-stream
+      #     asset_name: hchuck-${{ github.event.release.tag_name }}-ubuntu
+      #     asset_path: artifact/ubuntu-latest/hchuck
+      #     upload_url: ${{ github.event.release.upload_url }}
+      #
+      # - uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     asset_content_type: application/octet-stream
+      #     asset_name: hchuck-${{ github.event.release.tag_name }}-macos
+      #     asset_path: artifact/macos-latest/hchuck
+      #     upload_url: ${{ github.event.release.upload_url }}
+      #
+      # - uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     asset_content_type: application/octet-stream
+      #     asset_name: hchuck-${{ github.event.release.tag_name }}-windows.exe
+      #     asset_path: artifact/windows-latest/hchuck.exe
+      #     upload_url: ${{ github.event.release.upload_url }}
