@@ -95,3 +95,9 @@ jobs:
         with:
           file: artefact/${{ matrix.os }}/hchuck${{ matrix.extension }}
 
+      - name: Upload artefact
+        uses: actions/upload-artifact@v2
+        with:
+          path: artefact
+          name: hchuck-${{ github.sha }}
+
