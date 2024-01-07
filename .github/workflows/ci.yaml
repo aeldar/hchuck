@@ -4,6 +4,9 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  release:
+    types:
+      - created:
 
 # INFO: The following configuration block ensures that only one build runs per branch,
 # which may be desirable for projects with a costly build process.
@@ -20,7 +23,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        ghc-version: ['9.8', '9.6', '9.4', '9.2', '9.0']
+        # ghc-version: ['9.8', '9.6', '9.4', '9.2', '9.0']
+        ghc-version: ['9.8']
 
         include:
           - os: windows-latest
@@ -81,3 +85,6 @@ jobs:
 
       - name: Build documentation
         run: cabal haddock all
+
+      - name: Install binary
+        run: cabal install --installdir artefact/${{ matrix.os }} --install-method copy
