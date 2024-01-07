@@ -97,7 +97,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hchuck-${{ github.sha }}
+          name: hchuck-${{ github.sha }}-${{ matrix.os }}
           path: artifact
 
   release:
@@ -108,8 +108,9 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: hchuck-${{ github.sha }}
+          patter: hchuck-${{ github.sha }}-*
           path: artifact
+          merge-multiple: true
 
       - name: Zip artifacts
         run: |
