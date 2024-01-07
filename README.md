@@ -1,6 +1,6 @@
 # hchuck
 
-[![GitHub CI](https://github.com/aeldar/hchuck/workflows/CI/badge.svg)](https://github.com/aeldar/hchuck/actions?branch=main)
+[![GitHub CI](https://github.com/aeldar/hchuck/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/aeldar/hchuck/actions)
 
 ## Description
 
