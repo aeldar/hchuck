@@ -22,19 +22,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        # ghc-version: ['9.8', '9.6', '9.4', '9.2', '9.0']
         ghc-version: ['9.8']
-        upx-args: --best --lzma
-        strip: true
 
         include:
+          - os: [ubuntu-latest]
+            upx-args: --best --lzma
+            strip: true
           - os: windows-latest
-            ghc-version: '9.8'
             upx-args: -9
             strip: false
           - os: macos-latest
-            ghc-version: '9.8'
             upx-args: --best
             strip: true
 
