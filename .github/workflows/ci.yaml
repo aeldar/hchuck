@@ -6,7 +6,7 @@ on:
     branches: [main, master]
   release:
     types:
-      - created:
+      - created
 
 # INFO: The following configuration block ensures that only one build runs per branch,
 # which may be desirable for projects with a costly build process.
