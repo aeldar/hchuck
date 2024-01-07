@@ -11,7 +11,7 @@ url :: String
 url = "https://api.chucknorris.io/jokes/random"
 
 mainIO :: IO ()
-mainIO = get url >>= \r -> TIO.putStrLn $ r ^. responseBody . key "value" . _String
+mainIO = get url >>= TIO.putStrLn . (^. (responseBody . key "value" . _String))
 
 mainIO' :: IO ()
 mainIO' = do
