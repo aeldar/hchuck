@@ -95,10 +95,10 @@ jobs:
           strip: ${{ matrix.strip }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: artifact
-          name: hchuck-${{ github.sha }}
+          # name: hchuck-${{ github.sha }}
 
   release:
     needs: build
@@ -107,16 +107,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
-          name: hchuck-${{ github.sha }}
+          # name: hchuck-${{ github.sha }}
           path: artifact
 
       - name: Zip artifacts
         run: |
-          zip -j artifact/ubuntu-latest/hchuck artifact/hchuck-${{ github.ref_name }}-ubuntu.zip
-          zip -j artifact/windows-latest/hchuck artifact/hchuck-${{ github.ref_name }}-windows.zip
-          zip -j artifact/windows-latest/hchuck artifact/hchuck-${{ github.ref_name }}-macos.zip
+          zip -j artifact/hchuck-${{ github.ref_name }}-ubuntu.zip artifact/ubuntu-latest/hchuck
+          zip -j artifact/hchuck-${{ github.ref_name }}-windows.zip artifact/windows-latest/hchuck.exe
+          zip -j artifact/hchuck-${{ github.ref_name }}-macos.zip artifact/windows-latest/hchuck
 
       - name: Release
         uses: softprops/action-gh-release@v1
