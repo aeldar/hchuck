@@ -25,13 +25,18 @@ jobs:
         os: [ubuntu-latest]
         # ghc-version: ['9.8', '9.6', '9.4', '9.2', '9.0']
         ghc-version: ['9.8']
+        upx-args: --best --lzma
+        strip: true
 
         include:
           - os: windows-latest
             ghc-version: '9.8'
-            extention: .exe
+            upx-args: -9
+            strip: false
           - os: macos-latest
             ghc-version: '9.8'
+            upx-args: --best
+            strip: true
 
     steps:
       - uses: actions/checkout@v4
@@ -88,16 +93,18 @@ jobs:
         run: cabal haddock all
 
       - name: Install binary
-        run: cabal install --installdir artefact/${{ matrix.os }} --install-method copy
+        run: cabal install --installdir artifact/${{ matrix.os }} --install-method copy
 
-      - name: Compress
+      - name: Strip and compress
         uses: svenstaro/upx-action@v2
         with:
-          file: artefact/${{ matrix.os }}/hchuck${{ matrix.extension }}
+          files: artifact/${{ matrix.os }}/hchuck*
+          args: ${{ matrix.upx-args }}
+          strip: ${{ matrix.strip }}
 
-      - name: Upload artefact
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          path: artefact
+          path: artifact
           name: hchuck-${{ github.sha }}
 
