@@ -113,7 +113,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/checkout@v2
+      - name: Zip artifacts
+        run: |
+          zip -j artifact/ubuntu-latest/hchuck artifact/hchuck-${{ github.ref_name }}-ubuntu.zip
+          zip -j artifact/windows-latest/hchuck artifact/hchuck-${{ github.ref_name }}-windows.zip
+          zip -j artifact/windows-latest/hchuck artifact/hchuck-${{ github.ref_name }}-macos.zip
 
       - uses: actions/download-artifact@v2
         with:
@@ -123,31 +127,4 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: artifact/**/*
-
-      # - uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     asset_content_type: application/octet-stream
-      #     asset_name: hchuck-${{ github.event.release.tag_name }}-ubuntu
-      #     asset_path: artifact/ubuntu-latest/hchuck
-      #     upload_url: ${{ github.event.release.upload_url }}
-      #
-      # - uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     asset_content_type: application/octet-stream
-      #     asset_name: hchuck-${{ github.event.release.tag_name }}-macos
-      #     asset_path: artifact/macos-latest/hchuck
-      #     upload_url: ${{ github.event.release.upload_url }}
-      #
-      # - uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     asset_content_type: application/octet-stream
-      #     asset_name: hchuck-${{ github.event.release.tag_name }}-windows.exe
-      #     asset_path: artifact/windows-latest/hchuck.exe
-      #     upload_url: ${{ github.event.release.upload_url }}
+          files: artifact/**/*.zip
