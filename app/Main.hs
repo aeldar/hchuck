@@ -20,8 +20,4 @@ mainIO' = do
   TIO.putStrLn fact
 
 main :: IO ()
--- main = do
-  -- response <- get url
-  -- let joke = response ^. responseBody . key "value" . _String
-  -- TIO.putStrLn joke
 main = mainIO
