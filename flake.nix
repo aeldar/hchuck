@@ -11,7 +11,7 @@
         version = "0.1.0.1";
         src = pkgs.fetchzip {
           url = "https://github.com/aeldar/hchuck/releases/download/v0.1.0.1/hchuck-v0.1.0.1-ubuntu.zip";
-          sha256 = "0000000000000000000000000000000000000000000000000000"; # <-- Replace after first build!
+          sha256 = "sha256-FRdqo1LWPZfi7Xf5/iZ9TRnXUHdN5qE2K1MwpaARUOY=";
         };
         installPhase = ''
           mkdir -p $out/bin
