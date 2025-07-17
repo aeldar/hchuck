@@ -19,6 +19,5 @@ See [Releases](https://github.com/aeldar/hchuck/releases).
 ## Run using Nix
 
 ```bash
-nix run aeldar/hchuck
+nix run github:aeldar/hchuck
 ```
-
