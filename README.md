@@ -15,3 +15,10 @@ cabal build
 ## Download binary
 
 See [Releases](https://github.com/aeldar/hchuck/releases).
+
+## Run using Nix
+
+```bash
+nix run aeldar/hchuck
+```
+
