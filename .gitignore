@@ -21,3 +21,9 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+# Nix build artifacts
+/result
+/.nix-gcroots/
+*.drv
+/.nix-*
+/.nix-defexpr/
